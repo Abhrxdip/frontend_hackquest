@@ -9,6 +9,15 @@ import { LeaderboardPage } from "./pages/LeaderboardPage";
 import { ActivityPage } from "./pages/ActivityPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { AchievementsPage } from "./pages/AchievementsPage";
+import { useAppContext } from "./store/AppContext";
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { state } = useAppContext();
+  if (!state.user) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
 
 export default function App() {
   return (
@@ -17,12 +26,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/quests" element={<QuestsPage />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-          <Route path="/activity" element={<ActivityPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/quests" element={<ProtectedRoute><QuestsPage /></ProtectedRoute>} />
+          <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
+          <Route path="/activity" element={<ProtectedRoute><ActivityPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/achievements" element={<ProtectedRoute><AchievementsPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

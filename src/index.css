@@ -6,6 +6,12 @@
 }
 
 @layer base {
+  html,
+  body,
+  #root {
+    @apply overflow-x-hidden;
+  }
+
   body {
     @apply bg-[#050A0A] text-[#F5F5F5] font-sans;
   }

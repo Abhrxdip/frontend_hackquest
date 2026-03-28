@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Layout } from "../components/layout/Layout";
+import { useAppContext } from "../store/AppContext";
 import { cn } from "../lib/utils";
 import { Zap, Trophy, Award, Activity, Swords, User, LayoutDashboard, Globe } from "lucide-react";
 
@@ -140,6 +141,9 @@ const APP_PREVIEWS = [
 ];
 
 export const LandingPage = () => {
+  const { state } = useAppContext();
+  const nextRoute = (path: string) => (state.user ? path : "/login");
+
   return (
     <Layout>
       <div className="flex flex-col space-y-32 pb-24">
@@ -171,7 +175,7 @@ export const LandingPage = () => {
                 <Link to="/login">
                   <Button size="lg">Enter Arena</Button>
                 </Link>
-                <Link to="/quests">
+                <Link to={nextRoute("/quests")}>
                   <Button variant="secondary" size="lg">
                     Explore Quests
                   </Button>
@@ -267,7 +271,7 @@ export const LandingPage = () => {
                 <p className="text-xl text-[#A1A1AA] leading-relaxed mb-10">
                   {app.description}
                 </p>
-                <Link to={app.path}>
+                <Link to={nextRoute(app.path)}>
                   <Button variant="secondary" size="lg">
                     Explore {app.title.split(' ').pop()}
                   </Button>
@@ -313,7 +317,7 @@ export const LandingPage = () => {
             <Link to="/login">
               <Button size="lg">Join Now</Button>
             </Link>
-            <Link to="/dashboard">
+            <Link to={nextRoute("/dashboard")}>
               <Button variant="secondary" size="lg">Explore Demo</Button>
             </Link>
           </div>

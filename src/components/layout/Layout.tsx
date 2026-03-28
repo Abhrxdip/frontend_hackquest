@@ -15,15 +15,6 @@ const NAV_LINKS = [
   { name: "Profile", path: "/profile", icon: UserIcon },
 ];
 
-const LANDING_NAV_LINKS = [
-  { name: "Dashboard", path: "/dashboard" },
-  { name: "Quests", path: "/quests" },
-  { name: "Leaderboard", path: "/leaderboard" },
-  { name: "Activity", path: "/activity" },
-  { name: "Achievements", path: "/achievements" },
-  { name: "Profile", path: "/profile" },
-];
-
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const { state } = useAppContext();
@@ -36,26 +27,16 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#050A0A] text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635]">
+    <div className="min-h-screen overflow-x-hidden bg-[#050A0A] text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635]">
       <nav className="fixed top-0 z-50 w-full border-b border-[#1F7A6B]/10 bg-[#050A0A]/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#134E4A] via-[#1F7A6B] to-[#A3E635] shadow-[0_0_15px_rgba(163,230,53,0.3)]" />
-            <span className="text-xl font-bold tracking-tighter">HackQuest</span>
+            <span className="text-lg font-bold tracking-tighter sm:text-xl">HackQuest</span>
           </Link>
 
           <div className="hidden items-center gap-1 md:flex">
-            {isLanding ? (
-              LANDING_NAV_LINKS.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.path}
-                  className="px-4 py-1.5 text-sm font-medium text-[#A1A1AA] transition-colors hover:text-white"
-                >
-                  {link.name}
-                </a>
-              ))
-            ) : (
+            {user && !isLanding && (
               NAV_LINKS.map((link) => {
                 const isActive = location.pathname === link.path;
                 return (
@@ -119,19 +100,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="border-t border-[#1F7A6B]/10 px-6 pb-4 pt-3 md:hidden">
-            <div className="flex flex-col gap-1">
-              {isLanding
-                ? LANDING_NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1AA] transition-colors hover:bg-[#1F7A6B]/10 hover:text-white"
-                    >
-                      {link.name}
-                    </Link>
-                  ))
-                : NAV_LINKS.map((link) => {
+          <div className="border-t border-[#1F7A6B]/10 px-4 pb-4 pt-3 sm:px-6 md:hidden">
+            {user && !isLanding && (
+              <div className="flex flex-col gap-1">
+                {NAV_LINKS.map((link) => {
                     const isActive = location.pathname === link.path;
                     return (
                       <Link
@@ -149,7 +121,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                       </Link>
                     );
                   })}
-            </div>
+              </div>
+            )}
 
             <div className="mt-3 border-t border-[#1F7A6B]/10 pt-3">
               {isLanding ? (

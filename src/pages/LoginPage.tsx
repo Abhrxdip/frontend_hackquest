@@ -4,15 +4,27 @@ import { motion } from "motion/react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Layout } from "../components/layout/Layout";
+import { useAppContext } from "../store/AppContext";
 import { Wallet, LogIn } from "lucide-react";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const { dispatch } = useAppContext();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, we would authenticate here
+    dispatch({
+      type: "LOGIN",
+      payload: {
+        id: `user-${Date.now()}`,
+        username,
+        avatar: `https://picsum.photos/seed/${encodeURIComponent(username)}/100/100`,
+        xp: 0,
+        level: 1,
+        rank: 999,
+      },
+    });
     navigate("/dashboard");
   };
 

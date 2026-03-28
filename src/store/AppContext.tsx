@@ -18,15 +18,7 @@ type Action =
   | { type: "UPDATE_LEADERBOARD"; payload: LeaderboardEntry[] };
 
 const initialState: State = {
-  user: {
-    id: "user-1",
-    username: "HackMaster",
-    avatar: "https://picsum.photos/seed/hackmaster/100/100",
-    xp: 2450,
-    level: 12,
-    rank: 42,
-    walletAddress: "0x71C...3F2",
-  },
+  user: null,
   quests: MOCK_QUESTS,
   leaderboard: MOCK_LEADERBOARD,
   activity: MOCK_ACTIVITY,
