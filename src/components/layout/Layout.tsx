@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import { Button } from "../ui/Button";
 import { useAppContext } from "../../store/AppContext";
-import { LayoutDashboard, Swords, Trophy, User as UserIcon, Activity, Award } from "lucide-react";
+import { LayoutDashboard, Swords, Trophy, User as UserIcon, Activity, Award, Menu, X } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 const NAV_LINKS = [
@@ -29,6 +29,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAppContext();
   const { user } = state;
   const isLanding = location.pathname === "/";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-[#050A0A] text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635]">
@@ -77,7 +82,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 md:flex">
             {isLanding ? (
               <>
                 <Link to="/login">
@@ -101,7 +106,77 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               </Link>
             )}
           </div>
+
+          <button
+            type="button"
+            className="inline-flex items-center justify-center rounded-full border border-[#1F7A6B]/30 p-2 text-[#A1A1AA] transition-colors hover:text-white md:hidden"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        {isMobileMenuOpen && (
+          <div className="border-t border-[#1F7A6B]/10 px-6 pb-4 pt-3 md:hidden">
+            <div className="flex flex-col gap-1">
+              {isLanding
+                ? LANDING_NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1AA] transition-colors hover:bg-[#1F7A6B]/10 hover:text-white"
+                    >
+                      {link.name}
+                    </Link>
+                  ))
+                : NAV_LINKS.map((link) => {
+                    const isActive = location.pathname === link.path;
+                    return (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        className={cn(
+                          "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                          isActive
+                            ? "bg-[#1F7A6B]/15 text-white"
+                            : "text-[#A1A1AA] hover:bg-[#1F7A6B]/10 hover:text-white"
+                        )}
+                      >
+                        <link.icon className="h-4 w-4" />
+                        <span>{link.name}</span>
+                      </Link>
+                    );
+                  })}
+            </div>
+
+            <div className="mt-3 border-t border-[#1F7A6B]/10 pt-3">
+              {isLanding ? (
+                <div className="flex flex-col gap-2">
+                  <Link to="/login" className="w-full">
+                    <Button variant="ghost" size="sm" className="w-full">Login</Button>
+                  </Link>
+                  <Link to="/login" className="w-full">
+                    <Button size="sm" className="w-full">Connect Wallet</Button>
+                  </Link>
+                </div>
+              ) : user ? (
+                <div className="flex items-center justify-between rounded-lg border border-[#1F7A6B]/20 bg-[#0F2F2B]/20 px-3 py-2">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-white">{user.username}</span>
+                    <span className="text-[10px] font-medium text-[#A3E635]">LVL {user.level}</span>
+                  </div>
+                  <img src={user.avatar} alt="Avatar" className="h-8 w-8 rounded-full border border-[#1F7A6B]/20" />
+                </div>
+              ) : (
+                <Link to="/login" className="w-full">
+                  <Button size="sm" className="w-full">Connect Wallet</Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       <main className="pt-24 pb-12">
