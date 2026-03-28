@@ -27,7 +27,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#050A0A] text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635]">
+    <div className="min-h-screen overflow-x-hidden text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635]">
       <nav className="fixed top-0 z-50 w-full border-b border-[#1F7A6B]/10 bg-[#050A0A]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-2">
