@@ -148,10 +148,15 @@ export const LandingPage = () => {
     <Layout>
       <div className="flex flex-col space-y-32 pb-24">
         {/* Hero Section */}
-        <section className="relative pt-12">
-          <div className="absolute -top-40 left-1/2 -z-10 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-[#134E4A]/20 blur-[120px]" />
+        <section className="relative overflow-hidden rounded-[36px] pt-12">
+          <div
+            className="absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat opacity-45 sm:opacity-55"
+            style={{ backgroundImage: "url('/bkg.jpeg')" }}
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#050A0A]/35 via-[#050A0A]/55 to-[#050A0A]/85" />
+          <div className="absolute -top-40 left-1/2 -z-0 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-[#134E4A]/20 blur-[120px]" />
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="relative z-10 grid grid-cols-1 gap-16 items-center lg:grid-cols-12">
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
