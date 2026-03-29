@@ -7,25 +7,76 @@ import { Layout } from "../components/layout/Layout";
 import { useAppContext } from "../store/AppContext";
 import { Wallet, LogIn } from "lucide-react";
 
+type WalletProvider = {
+  isPhantom?: boolean;
+  connect: () => Promise<{ publicKey?: { toString: () => string } }>;
+};
+
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const [walletError, setWalletError] = useState("");
+  const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const { dispatch } = useAppContext();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanedUsername = username.trim();
+    if (!cleanedUsername) return;
+
+    setWalletError("");
     dispatch({
       type: "LOGIN",
       payload: {
         id: `user-${Date.now()}`,
-        username,
-        avatar: `https://picsum.photos/seed/${encodeURIComponent(username)}/100/100`,
+        username: cleanedUsername,
+        avatar: `https://picsum.photos/seed/${encodeURIComponent(cleanedUsername)}/100/100`,
         xp: 0,
         level: 1,
         rank: 999,
       },
     });
     navigate("/dashboard");
+  };
+
+  const handleWalletLogin = async () => {
+    setWalletError("");
+
+    const provider = (window as Window & { solana?: WalletProvider }).solana;
+    if (!provider?.isPhantom) {
+      setWalletError("No wallet found. Install Phantom to continue.");
+      return;
+    }
+
+    try {
+      setIsConnectingWallet(true);
+      const response = await provider.connect();
+      const walletAddress = response.publicKey?.toString();
+
+      if (!walletAddress) {
+        setWalletError("Wallet connected, but no address was returned.");
+        return;
+      }
+
+      const generatedUsername = `wallet_${walletAddress.slice(0, 4)}${walletAddress.slice(-4)}`;
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          id: `wallet-${walletAddress}`,
+          username: generatedUsername,
+          avatar: `https://picsum.photos/seed/${encodeURIComponent(walletAddress)}/100/100`,
+          xp: 0,
+          level: 1,
+          rank: 999,
+          walletAddress,
+        },
+      });
+      navigate("/dashboard");
+    } catch {
+      setWalletError("Wallet connection was cancelled or failed. Try again.");
+    } finally {
+      setIsConnectingWallet(false);
+    }
   };
 
   return (
@@ -116,10 +167,21 @@ export const LoginPage = () => {
                 </div>
               </div>
 
-              <Button variant="secondary" className="w-full" size="lg">
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                size="lg"
+                onClick={handleWalletLogin}
+                disabled={isConnectingWallet}
+              >
                 <Wallet className="mr-2 h-5 w-5" />
-                Connect Wallet
+                {isConnectingWallet ? "Connecting Wallet..." : "Login with Wallet"}
               </Button>
+
+              {walletError && (
+                <p className="text-sm font-medium text-[#F87171]">{walletError}</p>
+              )}
             </form>
 
             <p className="mt-10 text-sm text-zinc-500">
