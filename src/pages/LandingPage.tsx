@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useSpring, useTransform, useMotionValue } from "motion/react";
 import { Button } from "../components/ui/Button";
@@ -8,12 +8,12 @@ import { useAppContext } from "../store/AppContext";
 import { cn } from "../lib/utils";
 import { Zap, Trophy, Award, Activity, Swords, User, LayoutDashboard, Globe } from "lucide-react";
 
-const StatBox = ({ label, value, sub, delay = 0 }: { label: string, value: string, sub: string, delay?: number }) => (
+const StatBox = ({ label, value, sub, delay = 0, isMobile = false }: { label: string, value: string, sub: string, delay?: number, isMobile?: boolean }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    transition={{ delay, duration: 0.5 }}
+    transition={{ delay: isMobile ? 0 : delay, duration: isMobile ? 0.3 : 0.5 }}
     className="h-full rounded-xl bg-[#00FF9F]/[0.02] border border-[#00FF9F]/5 p-4 group-hover:border-[#00FF9F]/20 transition-colors"
   >
     <div className="text-[10px] font-black text-[#00FF9F]/40 uppercase tracking-widest mb-1">{label}</div>
@@ -22,7 +22,7 @@ const StatBox = ({ label, value, sub, delay = 0 }: { label: string, value: strin
   </motion.div>
 );
 
-const MiniChart = () => (
+const MiniChart = ({ isMobile }: { isMobile: boolean }) => (
   <div className="h-24 w-full relative flex items-end gap-1 px-2">
     {[40, 70, 45, 90, 65, 80, 50, 95, 75, 60].map((h, i) => (
       <motion.div
@@ -30,7 +30,7 @@ const MiniChart = () => (
         initial={{ height: 0 }}
         whileInView={{ height: `${h}%` }}
         viewport={{ once: true }}
-        transition={{ delay: i * 0.05, duration: 0.8, ease: "easeOut" }}
+        transition={{ delay: isMobile ? 0 : i * 0.05, duration: isMobile ? 0.4 : 0.8, ease: "easeOut" }}
         className="flex-1 bg-gradient-to-t from-[#00FF9F]/40 to-[#00FF9F] rounded-t-sm"
       />
     ))}
@@ -47,7 +47,7 @@ const LiveActivityRow = ({ i }: { i: number }) => (
       <div className="h-1.5 w-24 bg-zinc-800 rounded-full overflow-hidden relative">
         <motion.div 
           animate={{ x: ["-100%", "100%"] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: i * 0.2 }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: i * 0.2 }}
           className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00FF9F]/40 to-transparent"
         />
       </div>
@@ -56,7 +56,7 @@ const LiveActivityRow = ({ i }: { i: number }) => (
   </div>
 );
 
-const APP_PREVIEWS = [
+const getAppPreviews = (isMobile: boolean) => [
   {
     id: "dashboard",
     title: "Real-Time Dashboard",
@@ -74,10 +74,10 @@ const APP_PREVIEWS = [
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <StatBox label="Accuracy" value="98.6%" sub="+2.4% vs last epoch" delay={0.1} />
-          <StatBox label="Latency" value="12ms" sub="Global optimal" delay={0.2} />
+          <StatBox label="Accuracy" value="98.6%" sub="+2.4% vs last epoch" delay={0.1} isMobile={isMobile} />
+          <StatBox label="Latency" value="12ms" sub="Global optimal" delay={0.2} isMobile={isMobile} />
         </div>
-        <MiniChart />
+        <MiniChart isMobile={isMobile} />
       </div>
     )
   },
@@ -97,7 +97,7 @@ const APP_PREVIEWS = [
             initial={{ x: -20, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: isMobile ? 0 : i * 0.1, duration: isMobile ? 0.3 : 0.5 }}
             className="p-3 rounded-xl bg-[#00FF9F]/[0.02] border border-[#00FF9F]/5 flex items-center justify-between mb-3 last:mb-0 group/item"
           >
             <div className="flex items-center gap-3">
@@ -127,7 +127,7 @@ const APP_PREVIEWS = [
                 initial={{ height: 0 }}
                 whileInView={{ height: `${h}%` }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, ease: "circOut" }}
+                transition={{ duration: isMobile ? 0.5 : 1, ease: "circOut" }}
                 className="w-full bg-[#00FF9F]/10 border-t border-[#00FF9F]/40 relative overflow-hidden"
               >
                 <div className="absolute top-0 inset-x-0 h-0.5 bg-[#00FF9F] shadow-[0_0_10px_#00FF9F]" />
@@ -170,8 +170,8 @@ const APP_PREVIEWS = [
     preview: (
       <div className="relative h-full w-full bg-[#05070A] rounded-2xl border border-[#00FF9F]/10 overflow-hidden p-6 flex items-center justify-center">
         <motion.div 
-          animate={{ rotateY: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          animate={isMobile ? {} : { rotateY: 360 }}
+          transition={isMobile ? {} : { duration: 10, repeat: Infinity, ease: "linear" }}
           className="relative h-40 w-32 [transform-style:preserve-3d]"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-[#00FF9F]/20 to-transparent border border-[#00FF9F]/30 rounded-xl flex flex-col items-center justify-center shadow-[0_0_50px_rgba(0,255,159,0.1)] backdrop-blur-sm">
@@ -216,15 +216,15 @@ const APP_PREVIEWS = [
   },
 ];
 
-const FloatingOrb = ({ className, delay = 0 }: { className?: string; delay?: number }) => (
+const FloatingOrb = ({ className, delay = 0, isMobile = false }: { className?: string; delay?: number; isMobile?: boolean }) => (
   <motion.div
-    animate={{
+    animate={isMobile ? { opacity: 0.15 } : {
       y: [0, -40, 0],
       x: [0, 20, 0],
       scale: [1, 1.1, 1],
       opacity: [0.15, 0.25, 0.15],
     }}
-    transition={{
+    transition={isMobile ? { duration: 0 } : {
       duration: 8,
       repeat: Infinity,
       ease: "easeInOut",
@@ -234,18 +234,27 @@ const FloatingOrb = ({ className, delay = 0 }: { className?: string; delay?: num
   />
 );
 
-const FadeInWhenVisible = ({ children, delay = 0, y = 20, blur = true }: { children: React.ReactNode; delay?: number; y?: number; blur?: boolean }) => (
+const FadeInWhenVisible = ({ children, delay = 0, y = 20, blur = true, isMobile = false }: { children: React.ReactNode; delay?: number; y?: number; blur?: boolean; isMobile?: boolean }) => (
   <motion.div
-    initial={{ opacity: 0, y, scale: 0.98, filter: blur ? "blur(10px)" : "none" }}
+    initial={{ 
+      opacity: 0, 
+      y: isMobile ? 10 : y, 
+      scale: isMobile ? 1 : 0.98, 
+      filter: (blur && !isMobile) ? "blur(10px)" : "none" 
+    }}
     whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-    viewport={{ once: true, margin: "-100px" }}
-    transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
+    viewport={{ once: true, margin: isMobile ? "0px" : "-100px" }}
+    transition={{ 
+      duration: isMobile ? 0.4 : 1, 
+      delay: isMobile ? 0 : delay, 
+      ease: [0.16, 1, 0.3, 1] 
+    }}
   >
     {children}
   </motion.div>
 );
 
-const NeuralLines = () => (
+const NeuralLines = ({ isMobile }: { isMobile: boolean }) => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
     <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -255,15 +264,17 @@ const NeuralLines = () => (
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#neural-grid)" />
-      <motion.path
-        d="M -100 100 Q 200 300 500 100 T 1200 400"
-        fill="none"
-        stroke="url(#green-gradient)"
-        strokeWidth="1"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 0.4 }}
-        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-      />
+      {!isMobile && (
+        <motion.path
+          d="M -100 100 Q 200 300 500 100 T 1200 400"
+          fill="none"
+          stroke="url(#green-gradient)"
+          strokeWidth="1"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 0.4 }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+        />
+      )}
       <linearGradient id="green-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stopColor="#00FF9F" stopOpacity="0" />
         <stop offset="50%" stopColor="#00FF9F" stopOpacity="1" />
@@ -275,6 +286,15 @@ const NeuralLines = () => (
 
 export const LandingPage = () => {
   const { state } = useAppContext();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const nextRoute = (path: string) => (state.user ? path : "/login");
 
   const { scrollYProgress } = useScroll();
@@ -289,15 +309,17 @@ export const LandingPage = () => {
   const heroRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!heroRef.current) return;
+    if (!heroRef.current || isMobile) return;
     const rect = heroRef.current.getBoundingClientRect();
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
   };
 
   // Hero Parallax Transforms
-  const heroX = useSpring(useTransform(mouseX, [0, 1200], [15, -15]), { stiffness: 50, damping: 20 });
-  const heroY = useSpring(useTransform(mouseY, [0, 800], [15, -15]), { stiffness: 50, damping: 20 });
+  const heroX = useSpring(useTransform(mouseX, [0, 1200], isMobile ? [0, 0] : [15, -15]), { stiffness: 50, damping: 20 });
+  const heroY = useSpring(useTransform(mouseY, [0, 800], isMobile ? [0, 0] : [15, -15]), { stiffness: 50, damping: 20 });
+  const cardRotateX = useSpring(useTransform(mouseY, [0, 800], isMobile ? [0, 0] : [8, -8]), { stiffness: 80, damping: 20 });
+  const cardRotateY = useSpring(useTransform(mouseX, [0, 1200], isMobile ? [0, 0] : [-10, 10]), { stiffness: 80, damping: 20 });
 
   return (
     <Layout>
@@ -312,31 +334,33 @@ export const LandingPage = () => {
         onMouseMove={handleMouseMove}
         className="relative flex w-full flex-col space-y-28 overflow-x-hidden bg-[#05070A] pb-40 selection:bg-[#00FF9F]/30 md:space-y-52 lg:space-y-72"
       >
-        <NeuralLines />
+        <NeuralLines isMobile={isMobile} />
         
         {/* Grain Overlay */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.05] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-[60]" />
         
         {/* System Scanline */}
-        <motion.div 
-          animate={{ y: ["-100%", "200%"] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-x-0 h-[20vh] bg-gradient-to-b from-transparent via-[#00FF9F]/5 to-transparent pointer-events-none z-[61]"
-        />
+        {!isMobile && (
+          <motion.div 
+            animate={{ y: ["-100%", "200%"] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-x-0 h-[20vh] bg-gradient-to-b from-transparent via-[#00FF9F]/5 to-transparent pointer-events-none z-[61]"
+          />
+        )}
 
         {/* Hero Section */}
         <section className="relative flex min-h-[85vh] w-full items-center overflow-hidden py-20 md:py-28 xl:py-32">
           <FloatingOrb className="bg-[#00FF9F]/10 h-[600px] w-[800px] -top-40 left-1/2 -translate-x-1/2" delay={0} />
           <FloatingOrb className="bg-[#00FFA3]/5 h-[400px] w-[400px] top-20 right-[10%]" delay={1} />
 
-          <div className="layout-shell-ultra">
-            <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:justify-between lg:gap-24 xl:gap-32">
+          <div className="layout-shell-ultra w-full">
+            <div className="grid w-full grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:justify-between lg:gap-24 xl:gap-32">
             <motion.div
-              initial={{ opacity: 0, x: -60 }}
+              initial={{ opacity: 0, x: isMobile ? 0 : -60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               style={{ x: heroX, y: heroY }}
-              className="max-w-4xl lg:max-w-none"
+              className="w-full max-w-4xl lg:max-w-none"
             >
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
@@ -351,12 +375,12 @@ export const LandingPage = () => {
                 AI Node Season 1 is Live
               </motion.div>
               
-              <div className="mb-8 overflow-hidden">
+              <div className={cn("mb-8", !isMobile && "overflow-hidden")}>
                 <motion.h1 
-                  initial={{ y: "100%", opacity: 0 }}
+                  initial={isMobile ? { opacity: 0, y: 10 } : { y: "100%", opacity: 0 }}
                   animate={{ 
                     y: 0, 
-                    opacity: [0, 1, 0.8, 1],
+                    opacity: isMobile ? 1 : [0, 1, 0.8, 1],
                   }}
                   transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                   className="text-5xl font-bold leading-[1.02] tracking-tight text-white sm:text-6xl md:text-7xl 2xl:text-8xl"
@@ -411,9 +435,9 @@ export const LandingPage = () => {
               className="relative mx-auto w-full max-w-xl [perspective:1200px] lg:ml-auto lg:max-w-none lg:translate-x-10 xl:translate-x-16"
             >
               <motion.div
-                style={{ 
-                  rotateX: useSpring(useTransform(mouseY, [0, 800], [8, -8])),
-                  rotateY: useSpring(useTransform(mouseX, [0, 1200], [-10, 10])),
+                style={{
+                  rotateX: cardRotateX,
+                  rotateY: cardRotateY,
                 }}
                 className="origin-center lg:origin-right lg:scale-[1.06] xl:scale-[1.1]"
               >
@@ -467,7 +491,7 @@ export const LandingPage = () => {
         </section>
 
         {/* Social Proof */}
-        <FadeInWhenVisible y={40}>
+        <FadeInWhenVisible y={40} isMobile={isMobile}>
         <section className="layout-shell-wide py-16 text-center md:py-24">
           <p className="mb-8 text-sm font-bold uppercase tracking-[0.2em] text-[#6B7280]">
             Used in Hackathons by developers worldwide
@@ -482,7 +506,7 @@ export const LandingPage = () => {
 
         {/* App Previews Section */}
         <section className="layout-shell-wide space-y-36 md:space-y-56 lg:space-y-72">
-          {APP_PREVIEWS.map((app, i) => (
+          {getAppPreviews(isMobile).map((app, i) => (
             <div 
               key={app.id} 
               id={app.id}
@@ -526,7 +550,7 @@ export const LandingPage = () => {
                 )}
               >
                 <motion.div 
-                  whileHover={{ rotateX: 8, rotateY: i % 2 === 0 ? -8 : 8, scale: 1.05 }}
+                  whileHover={isMobile ? {} : { rotateX: 8, rotateY: i % 2 === 0 ? -8 : 8, scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
                   className="h-full w-full"
                 >
@@ -546,10 +570,10 @@ export const LandingPage = () => {
         </section>
 
         {/* Final CTA */}
-        <FadeInWhenVisible y={50}>
+        <FadeInWhenVisible y={50} isMobile={isMobile}>
         <section className="layout-shell-wide">
         <div className="relative overflow-hidden rounded-[36px] border border-[#00FF9F]/10 bg-[#00FF9F]/[0.02] px-6 py-24 text-center backdrop-blur-md md:rounded-[52px] md:px-14 md:py-32">
-          <FloatingOrb className="bg-[#00FF9F]/10 h-[500px] w-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" delay={0} />
+          <FloatingOrb className="bg-[#00FF9F]/10 h-[500px] w-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" delay={0} isMobile={isMobile} />
           
           <h2 className="mb-9 text-5xl font-bold tracking-tighter text-white md:text-7xl xl:text-8xl">
             Initiate High-Velocity <br />
