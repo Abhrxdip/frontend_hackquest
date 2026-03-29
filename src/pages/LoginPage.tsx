@@ -30,23 +30,66 @@ export const LoginPage = () => {
 
   return (
     <Layout>
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <section className="layout-shell-wide py-10 md:py-16 lg:py-20">
+        <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14 xl:gap-20">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative overflow-hidden rounded-[34px] border border-[#1F7A6B]/20 bg-[#0A1715]/40 p-8 md:p-12 lg:p-14"
+        >
+          <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-[#1F7A6B]/20 blur-[120px]" />
+          <div className="pointer-events-none absolute -bottom-20 right-0 h-72 w-72 rounded-full bg-[#A3E635]/15 blur-[120px]" />
+
+          <div className="relative z-10 max-w-2xl space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#A3E635]/30 bg-[#A3E635]/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#A3E635]">
+              Access Protocol
+            </div>
+            <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
+              Connect Your Identity.
+              <span className="block bg-gradient-to-r from-[#A3E635] via-[#8CF6B0] to-[#1F7A6B] bg-clip-text text-transparent">
+                Enter The Arena.
+              </span>
+            </h1>
+            <p className="max-w-2xl text-lg leading-relaxed text-zinc-300 md:text-2xl">
+              Unlock your dashboard, quests, and on-chain achievements with a unified hacker profile built for high-velocity teams.
+            </p>
+
+            <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-[#1F7A6B]/20 bg-[#050A0A]/60 p-5">
+                <div className="text-3xl font-bold text-white">50K+</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Active Builders</div>
+              </div>
+              <div className="rounded-2xl border border-[#1F7A6B]/20 bg-[#050A0A]/60 p-5">
+                <div className="text-3xl font-bold text-[#A3E635]">24/7</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Live Challenges</div>
+              </div>
+              <div className="rounded-2xl border border-[#1F7A6B]/20 bg-[#050A0A]/60 p-5">
+                <div className="text-3xl font-bold text-white">99.9%</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Uptime</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-md"
+          className="w-full max-w-2xl lg:ml-auto"
         >
-          <Card className="p-10 text-center">
-            <div className="mb-8 flex flex-col items-center gap-4">
+          <Card className="p-8 text-left sm:p-10 lg:p-12">
+            <div className="mb-10 flex items-center gap-4">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-[#0F2F2B] via-[#1F7A6B] to-[#A3E635] shadow-2xl" />
-              <h1 className="text-3xl font-bold tracking-tighter">Welcome to HackQuest</h1>
-              <p className="text-sm text-zinc-400">Connect your identity to start your journey.</p>
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Welcome to HackQuest AI</h2>
+                <p className="text-base text-zinc-400">Connect your identity to start your journey.</p>
+              </div>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2 text-left">
-                <label className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+            <form onSubmit={handleLogin} className="space-y-8">
+              <div className="space-y-3 text-left">
+                <label className="text-sm font-bold uppercase tracking-widest text-zinc-500">
                   Username
                 </label>
                 <input
@@ -54,13 +97,13 @@ export const LoginPage = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your hacker name"
-                  className="w-full rounded-xl border border-[#1F7A6B]/20 bg-[#0F2F2B]/40 px-4 py-3 text-sm font-medium text-white transition-all focus:border-[#A3E635]/50 focus:outline-none focus:ring-2 focus:ring-[#A3E635]/20"
+                  className="w-full rounded-2xl border border-[#1F7A6B]/20 bg-[#0F2F2B]/40 px-5 py-4 text-base font-medium text-white transition-all focus:border-[#A3E635]/50 focus:outline-none focus:ring-2 focus:ring-[#A3E635]/20"
                   required
                 />
               </div>
 
               <Button type="submit" className="w-full" size="lg">
-                <LogIn className="mr-2 h-4 w-4" />
+                <LogIn className="mr-2 h-5 w-5" />
                 Login with Username
               </Button>
 
@@ -74,17 +117,18 @@ export const LoginPage = () => {
               </div>
 
               <Button variant="secondary" className="w-full" size="lg">
-                <Wallet className="mr-2 h-4 w-4" />
+                <Wallet className="mr-2 h-5 w-5" />
                 Connect Wallet
               </Button>
             </form>
 
-            <p className="mt-8 text-xs text-zinc-500">
+            <p className="mt-10 text-sm text-zinc-500">
               By connecting, you agree to our Terms of Service and Privacy Policy.
             </p>
           </Card>
         </motion.div>
-      </div>
+        </div>
+      </section>
     </Layout>
   );
 };

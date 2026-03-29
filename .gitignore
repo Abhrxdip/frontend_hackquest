@@ -1,18 +1,31 @@
+# dependencies
 node_modules/
-build/
+
+# build outputs
+.next/
 dist/
+build/
 coverage/
-.DS_Store
-Thumbs.db
+
+# env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# local env files
-.env*
-!.env.example
+# system
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
 
 # cache and temp
 .cache/
@@ -20,9 +33,8 @@ yarn-error.log*
 tmp/
 *.tmp
 
-# tool and editor state
-.vscode/
-.idea/
-
-# vercel local project metadata
+# platform metadata
 .vercel/
+
+# local tooling artifacts
+.github/prompts/

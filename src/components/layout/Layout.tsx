@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Button } from "../ui/Button";
 import { useAppContext } from "../../store/AppContext";
 import { LayoutDashboard, Swords, Trophy, User as UserIcon, Activity, Award, Menu, X } from "lucide-react";
@@ -21,21 +21,43 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { user } = state;
   const isLanding = location.pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const contentShellClass = isLanding
+    ? "w-full"
+    : "mx-auto w-full max-w-[1760px] px-6 sm:px-10 md:px-16 lg:px-24 2xl:px-32";
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#050A0A] text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635]">
-      <nav className="fixed top-0 z-50 w-full border-b border-[#1F7A6B]/10 bg-[#050A0A]/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#050A0A] text-[#F5F5F5] selection:bg-[#A3E635]/30 selection:text-[#A3E635] flex flex-col">
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-fade opacity-40" />
+        <motion.div
+          className="animate-aurora absolute -left-40 top-8 h-[34rem] w-[34rem] rounded-full bg-[#1F7A6B]/25 blur-[150px]"
+          animate={{ x: [0, 18, -12, 0], y: [0, 20, -14, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="animate-aurora absolute -bottom-10 -right-16 h-[32rem] w-[32rem] rounded-full bg-[#A3E635]/15 blur-[150px]"
+          animate={{ x: [0, -24, 12, 0], y: [0, -16, 8, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="animate-aurora absolute left-1/2 top-1/3 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-[#134E4A]/18 blur-[150px]"
+          animate={{ x: [0, 24, -18, 0], y: [0, -20, 14, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+
+      <nav className="fixed top-0 z-50 w-full border-b border-[#1F7A6B]/10 bg-[#050A0A]/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-20 w-full max-w-[1760px] items-center justify-between px-6 sm:px-10 md:px-16 lg:px-24 2xl:px-32">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#134E4A] via-[#1F7A6B] to-[#A3E635] shadow-[0_0_15px_rgba(163,230,53,0.3)]" />
-            <span className="text-lg font-bold tracking-tighter sm:text-xl">HackQuest</span>
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-[#134E4A] via-[#1F7A6B] to-[#A3E635] shadow-[0_0_15px_rgba(163,230,53,0.3)]" />
+            <span className="font-display text-base font-bold tracking-tight sm:text-xl">HackQuest AI</span>
           </Link>
 
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden items-center gap-2 md:flex">
             {user && !isLanding && (
               NAV_LINKS.map((link) => {
                 const isActive = location.pathname === link.path;
@@ -44,7 +66,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     key={link.path}
                     to={link.path}
                     className={cn(
-                      "relative flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors hover:text-white",
+                      "relative flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-semibold tracking-[0.01em] transition-colors hover:text-white",
                       isActive ? "text-white" : "text-[#A1A1AA]"
                     )}
                   >
@@ -55,7 +77,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
-                    <link.icon className="h-4 w-4" />
+                    <link.icon className="h-[18px] w-[18px]" />
                     <span className="relative z-10">{link.name}</span>
                   </Link>
                 );
@@ -74,12 +96,12 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 </Link>
               </>
             ) : user ? (
-              <div className="flex items-center gap-3 rounded-full border border-[#1F7A6B]/20 bg-[#0F2F2B]/20 px-3 py-1.5">
+              <div className="flex items-center gap-3 rounded-full border border-[#1F7A6B]/20 bg-[#0F2F2B]/20 px-4 py-2">
                 <div className="flex flex-col items-end">
-                  <span className="text-xs font-bold text-white">{user.username}</span>
-                  <span className="text-[10px] font-medium text-[#A3E635]">LVL {user.level}</span>
+                  <span className="text-sm font-bold text-white">{user.username}</span>
+                  <span className="text-[11px] font-medium text-[#A3E635]">LVL {user.level}</span>
                 </div>
-                <img src={user.avatar} alt="Avatar" className="h-8 w-8 rounded-full border border-[#1F7A6B]/20" />
+                <img src={user.avatar} alt="Avatar" className="h-9 w-9 rounded-full border border-[#1F7A6B]/20" />
               </div>
             ) : (
               <Link to="/login">
@@ -99,8 +121,15 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </button>
         </div>
 
-        {isMobileMenuOpen && (
-          <div className="border-t border-[#1F7A6B]/10 px-4 pb-4 pt-3 sm:px-6 md:hidden">
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              className="overflow-hidden border-t border-[#1F7A6B]/10 px-6 pb-4 pt-3 sm:px-10 md:hidden"
+            >
             {user && !isLanding && (
               <div className="flex flex-col gap-1">
                 {NAV_LINKS.map((link) => {
@@ -148,12 +177,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 </Link>
               )}
             </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
-      <main className="pt-24 pb-12">
-        <div className="mx-auto max-w-7xl px-6">
+      <main className="relative z-10 flex-grow pb-20 pt-28">
+        <div className={contentShellClass}>
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 10 }}
