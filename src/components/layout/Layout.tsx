@@ -117,21 +117,28 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             aria-expanded={isMobileMenuOpen}
             aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <motion.div
+              key={isMobileMenuOpen ? "close" : "open"}
+              initial={{ opacity: 0, rotate: -45 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </motion.div>
           </button>
         </div>
 
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22, ease: "easeInOut" }}
-              className="overflow-hidden border-t border-[#1F7A6B]/10 px-6 pb-4 pt-3 sm:px-10 md:hidden"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              className="will-change-transform overflow-hidden border-t border-[#1F7A6B]/10 bg-[#050A0A]/95 px-6 pb-6 pt-3 backdrop-blur-xl sm:px-10 md:hidden"
             >
             {user && !isLanding && (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
                 {NAV_LINKS.map((link) => {
                     const isActive = location.pathname === link.path;
                     return (
